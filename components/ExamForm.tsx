@@ -13,37 +13,68 @@ interface Question {
   text: string
   options: string[]
   correctAnswer: string
+  explanation: string
 }
 
 interface ExamFormProps {
   questions: Question[]
 }
 
+interface Result {
+  id: number
+  userAnswer: string
+  correctAnswer: string
+  isCorrect: boolean
+  explanation: string
+}
+
 export default function ExamForm({ questions }: ExamFormProps) {
   const [answers, setAnswers] = useState<Record<number, string>>({})
-  const [result, setResult] = useState<number | null>(null)
+  const [results, setResults] = useState<{ score: number, results: Result[] } | null>(null)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    const score = await submitExam(answers)
-    setResult(score)
+    const examResults = await submitExam(answers)
+    setResults(examResults)
   }
 
   const handleAnswerChange = (questionId: number, answer: string) => {
     setAnswers(prev => ({ ...prev, [questionId]: answer }))
   }
 
-  if (result !== null) {
+  if (results !== null) {
     return (
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="text-center"
+        className="space-y-6"
       >
-        <h2 className="text-xl font-bold mb-4">Exam Results</h2>
-        <p className="text-lg">Your score: {result}%</p>
-        <Button onClick={() => setResult(null)} className="mt-4">Retake Exam</Button>
+        <h2 className="text-2xl font-bold text-center">Exam Results</h2>
+        <p className="text-xl text-center">Your score: {results.score}%</p>
+        <div className="space-y-4">
+          {results.results.map((result, index) => (
+            <motion.div
+              key={result.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
+            >
+              <Card className={result.isCorrect ? "border-green-500" : "border-red-500"}>
+                <CardContent className="pt-6">
+                  <h3 className="text-lg font-semibold mb-2">Question {result.id}: {questions[index].text}</h3>
+                  <p className="mb-2">Your answer: {result.userAnswer}</p>
+                  <p className="mb-2">Correct answer: {result.correctAnswer}</p>
+                  <p className={`font-semibold ${result.isCorrect ? "text-green-600" : "text-red-600"}`}>
+                    {result.isCorrect ? "Correct" : "Incorrect"}
+                  </p>
+                  <p className="mt-2">{result.explanation}</p>
+                </CardContent>
+              </Card>
+            </motion.div>
+          ))}
+        </div>
+        <Button onClick={() => setResults(null)} className="mt-4">Retake Exam</Button>
       </motion.div>
     )
   }
