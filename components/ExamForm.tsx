@@ -36,6 +36,7 @@ export default function ExamForm({ questions }: ExamFormProps) {
     e.preventDefault()
     const examResults = await submitExam(answers)
     setResults(examResults)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
   const handleAnswerChange = (questionId: number, answer: string) => {
