@@ -6,10 +6,14 @@ import Link from 'next/link'
 const exams = [
   { 
     title: 'Salesforce AI Specialist',
-    description: 'Test your knowledge of Salesforce Einstein and AI capabilities.',
+    description: 'Test your knowledge of advanced Salesforce Einstein and AI capabilities.',
     link: '/practice-exams/salesforce-ai-specialist'
   },
-  // Add more exams here as needed
+  { 
+    title: 'Salesforce AI Associate',
+    description: 'Evaluate your understanding of fundamental Salesforce AI concepts and features.',
+    link: '/practice-exams/salesforce-ai-associate'
+  }
 ]
 
 export default function PracticeExams() {

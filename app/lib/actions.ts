@@ -1,20 +1,16 @@
 'use server'
 
 import { examQuestions } from './examQuestions'
+import { salesforceAIAssociateQuestions} from './salesforceAIAssociateQuestions'
 
-export async function submitExam(answers: Record<number, string>) {
-  const totalQuestions = examQuestions.length
-  const results = examQuestions.map(question => ({
-    id: question.id,
-    userAnswer: answers[question.id],
-    correctAnswer: question.correctAnswer,
-    isCorrect: answers[question.id] === question.correctAnswer,
-    explanation: question.explanation
-  }))
+export async function submitExam(answers: Record<number, string>, examType: 'specialist' | 'associate') {
+  const questions = examType === 'specialist' ? examQuestions : salesforceAIAssociateQuestions
+  const totalQuestions = questions.length
+  const correctAnswers = questions.filter(
+    (question) => answers[question.id] === question.correctAnswer
+  ).length
 
-  const correctAnswers = results.filter(result => result.isCorrect).length
   const score = Math.round((correctAnswers / totalQuestions) * 100)
-
-  return { score, results }
+  return score
 }
 
